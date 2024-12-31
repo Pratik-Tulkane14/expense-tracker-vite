@@ -13,6 +13,7 @@ import { SnackbarProvider, useSnackbar } from 'notistack';
 import Modal from 'react-modal';
 import { Expense } from './types';
 import './App.css';
+import Chart from './components/Chart';
 
 function ExpenseTracker() {
   const { enqueueSnackbar } = useSnackbar();
@@ -86,24 +87,44 @@ function ExpenseTracker() {
 
   return (
     <div className="app">
+      <h1 className='heading'>Expense Tracker</h1>
       <header className="header">
-        <h1>Expense Tracker</h1>
-        <div className="wallet-info">
-          <div className="balance">Balance: ₹{balance.toFixed(2)}</div>
-          <button onClick={() => setIsModalOpen(true)}>Add Expense</button>
-          <button onClick={() => {
-            const amount = Number(prompt('Enter amount to add:'));
-            if (!isNaN(amount) && amount > 0) {
-              addBalance(amount);
-            }
-          }}>Add Balance</button>
+        <div className="card-section">
+          <div className="cards">
+            <h2 className="card-heading">
+              Wallet Balance:
+              <span className="wallet-amt">₹{balance}</span>
+            </h2>
+            {/* <div className="balance">Wallet Balance: </div> */}
+            <button onClick={() => setIsModalOpen(true)}>Add Expense</button>
+          </div>
+          <div className="cards">
+            <div className="">
+              <h2 className="card-heading">
+                Expenses:
+                <span className="expense-amt">{balance}</span>
+              </h2>
+            </div>
+            <button
+              className='add-balance'
+              onClick={() => {
+                const amount = Number(prompt('Enter amount to add:'));
+                if (!isNaN(amount) && amount > 0) {
+                  addBalance(amount);
+                }
+              }}>Add Balance</button>
+          </div>
+          <div className="chart">
+            <Chart />
+          </div>
         </div>
+
       </header>
 
       <main>
         {/* Expense List */}
         <div className="expense-list">
-          <h2>Recent Expenses</h2>
+          <h2>Recent Transactions</h2>
           {expenses.map(expense => (
             <div key={expense.id} className="expense-item">
               <div className="expense-info">
@@ -172,62 +193,68 @@ function ExpenseForm({ onSubmit, initialData, onClose }: ExpenseFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="expense-form">
-      <h2>{initialData ? 'Edit Expense' : 'Add Expense'}</h2>
+      <div className="heading">
 
-      <div className="form-group">
-        <label htmlFor="title">Title</label>
-        <input
-          id="title"
-          type="text"
-          value={formData.title}
-          onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
-          required
-        />
+        <h2>{initialData ? 'Edit Expense' : 'Add Expense'}</h2>
       </div>
+      <div className="first-section">
 
-      <div className="form-group">
-        <label htmlFor="amount">Amount</label>
-        <input
-          id="amount"
-          type="number"
-          value={formData.amount}
-          onChange={e => setFormData(prev => ({ ...prev, amount: e.target.value }))}
-          required
-          min="0"
-        />
+        <div className="form-group">
+          <input
+            id="title"
+            placeholder='Title'
+            type="text"
+            value={formData.title}
+            onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <input
+            id="amount"
+            placeholder='Amount'
+            type="number"
+            value={formData.amount}
+            onChange={e => setFormData(prev => ({ ...prev, amount: e.target.value }))}
+            required
+            min="0"
+          />
+        </div>
       </div>
+      <div className="second-section">
 
-      <div className="form-group">
-        <label htmlFor="category">Category</label>
-        <select
-          id="category"
-          value={formData.category}
-          onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
-          required
-        >
-          <option value="">Select category</option>
-          <option value="Food">Food</option>
-          <option value="Transport">Transport</option>
-          <option value="Entertainment">Entertainment</option>
-          <option value="Shopping">Shopping</option>
-          <option value="Others">Others</option>
-        </select>
-      </div>
+        <div className="form-group">
+          <select
+            id="category"
+            value={formData.category}
+            onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
+            required
+          >
+            <option value="">Select category</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
 
-      <div className="form-group">
-        <label htmlFor="date">Date</label>
-        <input
-          id="date"
-          type="date"
-          value={formData.date}
-          onChange={e => setFormData(prev => ({ ...prev, date: e.target.value }))}
-          required
-        />
+        <div className="form-group">
+          <input
+            id="date"
+            placeholder='Date'
+            type="date"
+            value={formData.date}
+            onChange={e => setFormData(prev => ({ ...prev, date: e.target.value }))}
+            required
+          />
+        </div>
       </div>
 
       <div className="form-actions">
-        <button type="submit">{initialData ? 'Update' : 'Add'}</button>
-        <button type="button" onClick={onClose}>Cancel</button>
+        <button type="submit" className='primary'>{initialData ? 'Update' : 'Add'}</button>
+        <button type="button" className='secondary' onClick={onClose}>Cancel</button>
       </div>
     </form>
   );

@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 const Chart = () => {
     const [chartData, setChartData] = useState<[]>([]);
     useEffect(() => {
-        const expensesList = localStorage.getItem("expensesList");
+        const expensesList = localStorage.getItem("expenses");
         if (expensesList) {
             const parsedData = JSON.parse(expensesList)
             const result = parsedData.map(element => ({
                 name: element.title.charAt(0).toUpperCase()+ element.title.slice(1),
-                price: parseInt(element.price),
+                price: parseInt(element.amount),
                 category: element.category,
                 date: element.date,
 
