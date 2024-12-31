@@ -1,19 +1,23 @@
 // src/types/index.ts
-export interface Expense {
-  id: string;
-  title: string;
-  amount: number;
-  category: string;
-  date: string;
-}
+// export interface Expense {
+//   id: string;
+//   title: string;
+//   amount: number;
+//   category: string;
+//   date: string;
+// }
 
 // src/App.tsx
 import { useState, useEffect } from 'react';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import Modal from 'react-modal';
-import { Expense } from './types';
+// import { Expense } from './types';
 import './App.css';
 import Chart from './components/Chart';
+import Expense from './interface/Expense';
+import ExpenseForm from './components/ExpenseForm';
+import { FaPlus } from 'react-icons/fa';
+import Barchart from './components/Barchart';
 
 function ExpenseTracker() {
   const { enqueueSnackbar } = useSnackbar();
@@ -93,16 +97,18 @@ function ExpenseTracker() {
           <div className="cards">
             <h2 className="card-heading">
               Wallet Balance:
-              <span className="wallet-amt">₹{balance}</span>
+              <span className="wallet-amt"> ₹{balance}</span>
             </h2>
             {/* <div className="balance">Wallet Balance: </div> */}
-            <button onClick={() => setIsModalOpen(true)}>Add Expense</button>
+            <button onClick={() => setIsModalOpen(true)} className='add-expense'>
+              <FaPlus />
+              Add Expense</button>
           </div>
           <div className="cards">
             <div className="">
               <h2 className="card-heading">
                 Expenses:
-                <span className="expense-amt">{balance}</span>
+                <span className="expense-amt"> ₹{balance}</span>
               </h2>
             </div>
             <button
@@ -123,142 +129,172 @@ function ExpenseTracker() {
 
       <main>
         {/* Expense List */}
-        <div className="expense-list">
-          <h2>Recent Transactions</h2>
-          {expenses.map(expense => (
-            <div key={expense.id} className="expense-item">
-              <div className="expense-info">
-                <h3>{expense.title}</h3>
-                <p>₹{expense.amount} - {expense.category}</p>
-                <p>{new Date(expense.date).toLocaleDateString()}</p>
-              </div>
-              <div className="expense-actions">
-                <button onClick={() => {
-                  setEditingExpense(expense);
-                  setIsModalOpen(true);
-                }}>Edit</button>
-                <button onClick={() => deleteExpense(expense.id)}>Delete</button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <div className="wrapper">
 
-        {/* Expense Form Modal */}
-        <Modal
-          isOpen={isModalOpen}
-          onRequestClose={() => {
-            setIsModalOpen(false);
-            setEditingExpense(null);
-          }}
-          className="modal"
-          overlayClassName="overlay"
-        >
-          <ExpenseForm
-            onSubmit={editingExpense ? editExpense : addExpense}
-            initialData={editingExpense}
-            onClose={() => {
+          <div className="left-section">
+            <div className="wrapper-heading">
+
+              <h2 className='heading'>Recent Transactions</h2>
+            </div>
+            <div className="expense-list">
+              {expenses.map(expense => (
+                <div key={expense.id} className="expense-item">
+                  <div className="expense-info">
+                    <div className="item-img">
+                      <img src={`/${expense.category.toLowerCase()}.svg`} alt="icon" />
+                    </div>
+                    <div className="exp-details">
+
+                      <div className="title">
+                        <h3>{expense.title}</h3>
+                      </div>
+                      <div className="date-section">
+                        <p className='date'>{new Date(expense.date).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="expense-actions">
+                    <p className='price'>₹{expense.amount}</p>
+                    <span
+                      className='edit-btn'
+                      onClick={() => {
+                        setEditingExpense(expense);
+                        setIsModalOpen(true);
+                      }}>
+                      <img src="/edit.png" alt="edit" />
+                    </span>
+                    <span onClick={() => deleteExpense(expense.id)}>
+                      <img src="/cancel.svg" alt="delete" />
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Expense Form Modal */}
+          <Modal
+            isOpen={isModalOpen}
+            onRequestClose={() => {
               setIsModalOpen(false);
               setEditingExpense(null);
             }}
-          />
-        </Modal>
+            className="modal"
+            overlayClassName="overlay"
+          >
+            <ExpenseForm
+              onSubmit={editingExpense ? editExpense : addExpense}
+              initialData={editingExpense}
+              onClose={() => {
+                setIsModalOpen(false);
+                setEditingExpense(null);
+              }}
+            />
+          </Modal>
+          <div className="right-section">
+            <h2 className="heading">Top Expenses</h2>
+            <div className="chart-section">
+              <Barchart />
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   );
 }
 
 // ExpenseForm Component
-interface ExpenseFormProps {
-  onSubmit: (expense: any) => void;
-  initialData?: Expense | null;
-  onClose: () => void;
-}
+// interface ExpenseFormProps {
+//   onSubmit: (expense: any) => void;
+//   initialData?: Expense | null;
+//   onClose: () => void;
+// }
 
-function ExpenseForm({ onSubmit, initialData, onClose }: ExpenseFormProps) {
-  const [formData, setFormData] = useState({
-    title: initialData?.title || '',
-    amount: initialData?.amount || '',
-    category: initialData?.category || '',
-    date: initialData?.date || new Date().toISOString().split('T')[0]
-  });
+// function ExpenseForm({ onSubmit, initialData, onClose }: ExpenseFormProps) {
+//   const [formData, setFormData] = useState({
+//     title: initialData?.title || '',
+//     amount: initialData?.amount || '',
+//     category: initialData?.category || '',
+//     date: initialData?.date || new Date().toISOString().split('T')[0]
+//   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit({
-      ...formData,
-      amount: Number(formData.amount),
-      id: initialData?.id
-    });
-  };
+//   const handleSubmit = (e: React.FormEvent) => {
+//     e.preventDefault();
+//     onSubmit({
+//       ...formData,
+//       amount: Number(formData.amount),
+//       id: initialData?.id
+//     });
+//   };
 
-  return (
-    <form onSubmit={handleSubmit} className="expense-form">
-      <div className="heading">
+//   return (
+//     <form onSubmit={handleSubmit} className="expense-form">
+//       <div className="heading">
 
-        <h2>{initialData ? 'Edit Expense' : 'Add Expense'}</h2>
-      </div>
-      <div className="first-section">
+//         <h2>{initialData ? 'Edit Expense' : 'Add Expense'}</h2>
+//       </div>
+//       <div className="first-section">
 
-        <div className="form-group">
-          <input
-            id="title"
-            placeholder='Title'
-            type="text"
-            value={formData.title}
-            onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
-            required
-          />
-        </div>
+//         <div className="form-group">
+//           <input
+//             id="title"
+//             placeholder='Title'
+//             type="text"
+//             value={formData.title}
+//             onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
+//             required
+//           />
+//         </div>
 
-        <div className="form-group">
-          <input
-            id="amount"
-            placeholder='Amount'
-            type="number"
-            value={formData.amount}
-            onChange={e => setFormData(prev => ({ ...prev, amount: e.target.value }))}
-            required
-            min="0"
-          />
-        </div>
-      </div>
-      <div className="second-section">
+//         <div className="form-group">
+//           <input
+//             id="amount"
+//             placeholder='Amount'
+//             type="number"
+//             value={formData.amount}
+//             onChange={e => setFormData(prev => ({ ...prev, amount: e.target.value }))}
+//             required
+//             min="0"
+//           />
+//         </div>
+//       </div>
+//       <div className="second-section">
 
-        <div className="form-group">
-          <select
-            id="category"
-            value={formData.category}
-            onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
-            required
-          >
-            <option value="">Select category</option>
-            <option value="Food">Food</option>
-            <option value="Transport">Transport</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Others">Others</option>
-          </select>
-        </div>
+//         <div className="form-group">
+//           <select
+//             id="category"
+//             value={formData.category}
+//             onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
+//             required
+//           >
+//             <option value="">Select category</option>
+//             <option value="Food">Food</option>
+//             <option value="Transport">Transport</option>
+//             <option value="Entertainment">Entertainment</option>
+//             <option value="Shopping">Shopping</option>
+//             <option value="Others">Others</option>
+//           </select>
+//         </div>
 
-        <div className="form-group">
-          <input
-            id="date"
-            placeholder='Date'
-            type="date"
-            value={formData.date}
-            onChange={e => setFormData(prev => ({ ...prev, date: e.target.value }))}
-            required
-          />
-        </div>
-      </div>
+//         <div className="form-group">
+//           <input
+//             id="date"
+//             placeholder='Date'
+//             type="date"
+//             value={formData.date}
+//             onChange={e => setFormData(prev => ({ ...prev, date: e.target.value }))}
+//             required
+//           />
+//         </div>
+//       </div>
 
-      <div className="form-actions">
-        <button type="submit" className='primary'>{initialData ? 'Update' : 'Add'}</button>
-        <button type="button" className='secondary' onClick={onClose}>Cancel</button>
-      </div>
-    </form>
-  );
-}
+//       <div className="form-actions">
+//         <button type="submit" className='primary'>{initialData ? 'Update' : 'Add'}</button>
+//         <button type="button" className='secondary' onClick={onClose}>Cancel</button>
+//       </div>
+//     </form>
+//   );
+// }
 
 function App() {
   return (

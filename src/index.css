@@ -38,6 +38,30 @@ html {
 .heading {
   color: var(--font-color);
 }
+.expense-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.price {
+  color: var(--expense-amt-color);
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.exp-details {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
+}
+.delete-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  height: 5rem;
+  width: 5rem;
+}
 .app {
   background-color: var(--primary-background-color);
   max-width: 1920px;
@@ -55,6 +79,7 @@ html {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  margin-top: 10px;
 }
 .card-section {
   display: flex;
@@ -91,11 +116,39 @@ html {
   color: var(--wallet-color);
   font-weight: bold;
 }
+.add-balance {
+  color: var(--font-color);
+  background: var(--secondary-btn-color);
+  padding: 5px 45px;
+  font-size: 18px;
+  border-radius: var(--border-radius);
+  border-color: transparent;
+  cursor: pointer;
+  font-weight: bold;
+}
+.expense-amt {
+  color: var(--expense-amt-color);
+  font-weight: bold;
+}
+.date {
+  color: var(--secondary-background-color);
+}
+.add-expense {
+  color: var(--font-color);
+  background-color: var(--wallet-color);
+  font-weight: bold;
+  padding: 5px 45px;
+  font-size: 18px;
+  border-radius: var(--border-radius);
+  border-color: transparent;
+  cursor: pointer;
+}
 .expense-list {
   background: white;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
 }
 
 .expense-item {
@@ -108,6 +161,7 @@ html {
 
 .expense-actions {
   display: flex;
+  align-items: center;
   gap: 10px;
 }
 
@@ -161,7 +215,7 @@ html {
   margin-top: 10px;
 }
 
-button {
+/* button {
   background: var(--expense-amt-color);
   color: var(--font-color);
   padding: 5px 45px;
@@ -169,7 +223,7 @@ button {
   border-radius: var(--border-radius);
   border-color: transparent;
   cursor: pointer;
-}
+} */
 .primary {
   width: 100%;
   background: var(--expense-amt-color);
@@ -191,15 +245,7 @@ button {
   margin-top: 10px;
   padding: 1rem;
 }
-.add-balance {
-  color: var(--font-color);
-  background: var(--secondary-btn-color);
-  padding: 5px 45px;
-  font-size: 18px;
-  border-radius: var(--border-radius);
-  border-color: transparent;
-  cursor: pointer;
-}
+
 .secondary {
   width: 100%;
   background: var(--secondary-background-color);
@@ -214,7 +260,13 @@ button {
 button:hover {
   opacity: 0.9;
 }
-
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 10px;
+}
 /* button[type="button"] {
   background-color: #666;
 } */
@@ -263,6 +315,7 @@ button:hover {
   }
   .left-section {
     display: flex;
+    flex-direction: column;
     width: 60%;
   }
   .first-section,

@@ -3,12 +3,12 @@ import { BarChart } from '@mantine/charts';
 const Barchart = () => {
     const [chartData, setChartData] = useState<[]>([]);
     useEffect(() => {
-        const expensesList = localStorage.getItem("expensesList");
+        const expensesList = localStorage.getItem("expenses");
         if (expensesList) {
             const parsedData = JSON.parse(expensesList)
             const result = parsedData.map(element => ({
-                name: element.title.charAt(0).toUpperCase()+ element.title.slice(1),
-                Price: parseInt(element.price),
+                name: element.title.charAt(0).toUpperCase() + element.title.slice(1),
+                Price: parseInt(element.amount),
                 category: element.category.charAt(0).toUpperCase() + element.category.slice(1),
                 date: element.date,
 
@@ -17,19 +17,19 @@ const Barchart = () => {
             setChartData(result)
         }
     }, []);
-  return (
-    <>
-          <BarChart
-              h={200}
-              data={chartData}
-              dataKey="category"
-              orientation="vertical"
-              yAxisProps={{ width: 80 }}
-              barProps={{ radius: 10 }}
-              series={[{ name: 'Price', color: 'violet' }]}
-          />
-    </>
-  )
+    return (
+        <>
+            <BarChart
+                h={200}
+                data={chartData}
+                dataKey="category"
+                orientation="vertical"
+                yAxisProps={{ width: 80 }}
+                barProps={{ radius: 10 }}
+                series={[{ name: 'Price', color: 'violet' }]}
+            />
+        </>
+    )
 }
 
 export default Barchart
