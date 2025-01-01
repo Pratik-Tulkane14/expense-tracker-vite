@@ -1,31 +1,45 @@
-import { PieChart, Pie, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Tooltip } from 'recharts';
 import { useEffect, useState } from 'react';
+
+interface ElementItem {
+    id: string;
+    title: string;
+    amount: number;
+    category: string;
+    date: string;
+}
+
+interface ChartData {
+    name: string;
+    value: number;
+    category: string;
+    date: string;
+    id: string;
+}
+
 const Chart = () => {
-    const [chartData, setChartData] = useState<[]>([]);
+    const [chartData, setChartData] = useState<ChartData[]>([]);
+
     useEffect(() => {
         const expensesList = localStorage.getItem("expenses");
         if (expensesList) {
-            const parsedData = JSON.parse(expensesList)
-            const result = parsedData.map(element => ({
-                name: element.title.charAt(0).toUpperCase()+ element.title.slice(1),
-                price: parseInt(element.amount),
+            const parsedData = JSON.parse(expensesList) as ElementItem[];
+            const result = parsedData.map((element: ElementItem) => ({
+                name: element.title.charAt(0).toUpperCase() + element.title.slice(1),
+                value: element.amount, // Updated key to `value`
                 category: element.category,
                 date: element.date,
-
-
+                id: element.id,
             }));
-            setChartData(result)
+            setChartData(result);
         }
     }, []);
+
     return (
         <>
-
-            {/* <ResponsiveContainer width="100%" height="100%"> */}
-            <PieChart
-                width={300} height={300}
-            >
+            <PieChart width={300} height={300}>
                 <Pie
-                    dataKey="price"
+                    dataKey="value"
                     data={chartData}
                     cx="50%"
                     cy="50%"
@@ -35,10 +49,8 @@ const Chart = () => {
                 />
                 <Tooltip />
             </PieChart>
-
-            {/* </ResponsiveContainer> */}
         </>
-    )
-}
+    );
+};
 
-export default Chart
+export default Chart;
