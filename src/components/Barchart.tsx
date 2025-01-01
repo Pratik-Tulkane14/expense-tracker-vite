@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { BarChart } from '@mantine/charts';
 const Barchart = () => {
     const [chartData, setChartData] = useState<[]>([]);
@@ -11,8 +11,6 @@ const Barchart = () => {
                 Price: parseInt(element.amount),
                 category: element.category.charAt(0).toUpperCase() + element.category.slice(1),
                 date: element.date,
-
-
             }));
             setChartData(result)
         }
