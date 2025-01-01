@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import Modal from 'react-modal';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 
 interface Expense {
     id: string;
@@ -11,17 +11,11 @@ interface Expense {
     date: string;
 }
 
-interface ExpenseFormData {
-    title: string;
-    amount: string;
-    category: string;
-    date: string;
-}
+type ExpenseFormData = Omit<Expense, 'id'>;
 
 export default function ExpenseTracker() {
     const { enqueueSnackbar } = useSnackbar();
 
-    // State management
     const [balance, setBalance] = useState(() => {
         const saved = localStorage.getItem('walletBalance');
         return saved ? Number(saved) : 5000;
@@ -35,13 +29,11 @@ export default function ExpenseTracker() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
 
-    // Persist data in localStorage
     useEffect(() => {
         localStorage.setItem('walletBalance', balance.toString());
         localStorage.setItem('expenses', JSON.stringify(expenses));
     }, [balance, expenses]);
 
-    // Expense management functions
     const addExpense = (formData: ExpenseFormData) => {
         const amount = Number(formData.amount);
 
@@ -52,10 +44,7 @@ export default function ExpenseTracker() {
 
         const newExpense: Expense = {
             id: crypto.randomUUID(),
-            title: formData.title,
-            amount: amount,
-            category: formData.category,
-            date: formData.date
+            ...formData
         };
 
         setExpenses(prev => [...prev, newExpense]);
@@ -64,7 +53,7 @@ export default function ExpenseTracker() {
         setIsModalOpen(false);
     };
 
-    const editExpense = (formData: ExpenseFormData & { id: string }) => {
+    const editExpense = (formData: Expense) => {
         const oldExpense = expenses.find(e => e.id === formData.id);
         if (!oldExpense) return;
 
@@ -76,15 +65,7 @@ export default function ExpenseTracker() {
             return;
         }
 
-        const updatedExpense: Expense = {
-            id: formData.id,
-            title: formData.title,
-            amount: newAmount,
-            category: formData.category,
-            date: formData.date
-        };
-
-        setExpenses(prev => prev.map(e => e.id === formData.id ? updatedExpense : e));
+        setExpenses(prev => prev.map(e => (e.id === formData.id ? formData : e)));
         setBalance(prev => prev + balanceDiff);
         enqueueSnackbar('Expense updated successfully!', { variant: 'success' });
         setIsModalOpen(false);
@@ -111,7 +92,6 @@ export default function ExpenseTracker() {
         enqueueSnackbar('Balance added successfully!', { variant: 'success' });
     };
 
-    // Calculate data for charts
     const categoryTotals = expenses.reduce((acc, expense) => {
         acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
         return acc;
@@ -204,7 +184,14 @@ export default function ExpenseTracker() {
                 overlayClassName="overlay"
             >
                 <ExpenseForm
-                    onSubmit={editingExpense ? editExpense : addExpense}
+                    onSubmit={(formData) => {
+                        if (editingExpense) {
+                            editExpense({ ...formData, id: editingExpense.id });
+                        } else {
+                            addExpense(formData);
+                        }
+                    }}
+
                     initialData={editingExpense}
                     onClose={() => {
                         setIsModalOpen(false);
@@ -217,15 +204,15 @@ export default function ExpenseTracker() {
 }
 
 interface ExpenseFormProps {
-    onSubmit: (expense: any) => void;
+    onSubmit: (expense: Expense | ExpenseFormData) => void;
     initialData?: Expense | null;
     onClose: () => void;
 }
 
 function ExpenseForm({ onSubmit, initialData, onClose }: ExpenseFormProps) {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<ExpenseFormData>({
         title: initialData?.title || '',
-        amount: initialData?.amount.toString() || '',
+        amount: initialData?.amount || 0,
         category: initialData?.category || '',
         date: initialData?.date || new Date().toISOString().split('T')[0]
     });
@@ -234,8 +221,8 @@ function ExpenseForm({ onSubmit, initialData, onClose }: ExpenseFormProps) {
         e.preventDefault();
         onSubmit({
             ...formData,
-            id: initialData?.id
-        });
+            id: initialData?.id // Pass id only if it exists
+        } as Expense);
     };
 
     return (
@@ -259,7 +246,7 @@ function ExpenseForm({ onSubmit, initialData, onClose }: ExpenseFormProps) {
                     id="amount"
                     type="number"
                     value={formData.amount}
-                    onChange={e => setFormData(prev => ({ ...prev, amount: e.target.value }))}
+                    onChange={e => setFormData(prev => ({ ...prev, amount: Number(e.target.value) }))}
                     required
                     min="0"
                 />

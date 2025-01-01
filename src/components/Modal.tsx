@@ -10,7 +10,7 @@ interface formName {
 }
 const Modal = ({ modalName, setIsModalOpen, formData }: formName) => {
     const [title, setTitle] = useState<string>("");
-    const [price, setPrice] = useState<string>("");
+    const [price, setPrice] = useState<number>(0);
     const [category, setCategory] = useState<string>("");
     const [date, setDate] = useState<string>("");
     const [balance, setBalance] = useState(() => {
@@ -22,16 +22,16 @@ const Modal = ({ modalName, setIsModalOpen, formData }: formName) => {
         return saved ? JSON.parse(saved) : [];
     });
     const editExpense = (expense: ExpenseForm) => {
-        
+
         const oldExpense = expenses.find(e => e.id === expense.id);
         if (!oldExpense) return;
-        
+
         const balanceDiff = oldExpense.price - expense.price;
         if (balanceDiff < 0 && Math.abs(balanceDiff) > balance) {
             enqueueSnackbar('Insufficient balance!', { variant: 'error' });
             return;
         }
-        
+
         setExpenses(prev =>
             prev.map(e => e.id === expense.id ? expense : e)
         );
@@ -55,7 +55,7 @@ const Modal = ({ modalName, setIsModalOpen, formData }: formName) => {
         const expensesString = localStorage.getItem("expenses");
         const currentExpenses = expensesString ? parseFloat(expensesString) : 0;
 
-        const priceAsNumber = price ? parseFloat(price) : 0;
+        const priceAsNumber = price ? price : 0;
         const randomID = Math.random();
         const newExpense: ExpenseForm = {
             id: Math.ceil(randomID * 100),
@@ -71,44 +71,26 @@ const Modal = ({ modalName, setIsModalOpen, formData }: formName) => {
         }
 
         const newTotalExpenses = currentExpenses + priceAsNumber;
-        
+
         if (modalName === "Add Expenses") {
             const newBalance = currentBalance - priceAsNumber;
-            
+
             localStorage.setItem(
                 "expensesList",
                 JSON.stringify([...expensesList, newExpense])
             );
             localStorage.setItem("balance", newBalance.toString());
             localStorage.setItem("walletBalance", newTotalExpenses.toString());
-            
+
             setIsModalOpen(false);
             enqueueSnackbar("Expense added successfully", { variant: "success" });
-        } 
-        else{
-            editExpense(formData)
         }
-        // else {
-        //     const recordToUpdate = expensesList.filter((item)=>item.id ===formData.id)
-        //     const selectedRecordPrice = recordToUpdate.price;
-        //     const filteredExpensesList = expensesList.filter((item)=>item.id !==formData.id)
-        //     let totalAmtSpend=0;
-        //     filteredExpensesList.forEach((item)=>{
-        //         totalAmtSpend +=item.price
-        //     })
-        //     if (selectedRecordPrice > priceAsNumber){
-        //         console.log("yes in if");
-                
-        //         const latestBalance = currentBalance - selectedRecordPrice
-        //         localStorage.setItem("balance", latestBalance.toString());
-        //         localStorage.setItem("expenses", JSON.stringify(totalAmtSpend + priceAsNumber));
+        else {
+            if (formData) {
+                editExpense(formData);
+            }
+        }
 
-        //     }
-        //     const updatedExpensesList = [...filteredExpensesList, newExpense];
-        //     localStorage.setItem("expensesList", JSON.stringify(updatedExpensesList));
-        //     setIsModalOpen(false);
-        //     enqueueSnackbar("Expense updated successfully", { variant: "success" });
-        // }
     };
     const handleCancel = () => {
         setIsModalOpen((prev) => !prev);
@@ -139,12 +121,12 @@ const Modal = ({ modalName, setIsModalOpen, formData }: formName) => {
                         </div>
                         <div className="">
                             <input
-                                type="text"
+                                type="number"
                                 className="input"
                                 required
                                 placeholder="Price"
                                 value={price}
-                                onChange={(e) => setPrice(e.target.value)}
+                                onChange={(e) => setPrice(Number(e.target.value))}
                             />
                         </div>
                         <div className="">

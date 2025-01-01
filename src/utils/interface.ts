@@ -1,5 +1,5 @@
 export default interface ExpenseForm {
-    id:string,
+    id:number,
     title: string,
     price: number,
     category: string,
