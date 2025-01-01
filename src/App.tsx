@@ -1,17 +1,6 @@
-// src/types/index.ts
-// export interface Expense {
-//   id: string;
-//   title: string;
-//   amount: number;
-//   category: string;
-//   date: string;
-// }
-
-// src/App.tsx
 import { useState, useEffect } from 'react';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import Modal from 'react-modal';
-// import { Expense } from './types';
 import './App.css';
 import Chart from './components/Chart';
 import Expense from './interface/Expense';
@@ -22,7 +11,7 @@ import AddBalanceForm from './components/AddBalanceForm';
 
 function ExpenseTracker() {
   const { enqueueSnackbar } = useSnackbar();
-  const [balance, setBalance] = useState(() => {
+  const [balance, setBalance] = useState<number>(() => {
     const saved = localStorage.getItem('walletBalance');
     return saved ? Number(saved) : 5000;
   });
@@ -42,7 +31,7 @@ function ExpenseTracker() {
     localStorage.setItem('walletBalance', balance.toString());
     localStorage.setItem('expenseAmt', expenseAmt.toString());
     localStorage.setItem('expenses', JSON.stringify(expenses));
-  }, [balance, expenses]);
+  }, [balance, expenses, expenseAmt]);
 
   const addExpense = (expense: Omit<Expense, 'id'>) => {
     if (expense.amount > balance) {

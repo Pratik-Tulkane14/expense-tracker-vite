@@ -16,7 +16,7 @@ const AddBalanceForm = ({ setBalance, onClose }: AddExpenseForm) => {
 
     return (
         <form onSubmit={handleSubmit} className="expense-form">
-            <div className="add-bal-heading">
+            <div className="add-heading">
                 <h2>Add Balance</h2>
             </div>
             <div className="form-group">

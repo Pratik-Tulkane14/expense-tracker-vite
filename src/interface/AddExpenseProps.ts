@@ -1,7 +1,5 @@
-import Expense from "./Expense";
-
 interface AddExpenseForm {
-  setExpenseAmt: Expense ;
+  setBalance: (value: number) => void;
   onClose: () => void;
 }
 export default AddExpenseForm;
