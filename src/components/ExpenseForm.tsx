@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ExpenseFormProps from '../interface/ExpenseFormProps';
 
-const ExpenseForm = ({ onSubmit, initialData, onClose }: ExpenseFormProps) => {
+const ExpenseForm = ({ onSubmit, initialData,  onClose }: ExpenseFormProps) => {
     const [formData, setFormData] = useState({
         title: initialData?.title || '',
         amount: initialData?.amount || '',
@@ -13,19 +13,28 @@ const ExpenseForm = ({ onSubmit, initialData, onClose }: ExpenseFormProps) => {
         e.preventDefault();
         onSubmit({
             ...formData,
-            amount: Number(formData.amount),
+            amount: (!initialData?.amount) ? Number(formData.amount) :
+                (Number(initialData.amount) > Number(formData.amount)) ?
+                    Number(initialData.amount) - Number(formData.amount) :
+                    Number(initialData.amount) + Number(formData.amount),
             id: initialData?.id
-        });
-    };
+        }
+        );
+        // if (Number(initialData?.amount) !== Number(formData.amount)) {
+        //     if (Number(initialData?.amount) > Number(formData.amount)) {
+        //         setExpenseAmt((prev: number) => prev - Number(formData.amount));
+        //     } else {
+        //         setExpenseAmt((prev: number) => prev + Number(formData.amount));
 
+        //     }
+        // }
+    };
     return (
         <form onSubmit={handleSubmit} className="expense-form">
-            <div className="heading">
-
+            <div className="exp-form-heading">
                 <h2>{initialData ? 'Edit Expense' : 'Add Expense'}</h2>
             </div>
             <div className="first-section">
-
                 <div className="form-group">
                     <input
                         id="title"
@@ -36,7 +45,6 @@ const ExpenseForm = ({ onSubmit, initialData, onClose }: ExpenseFormProps) => {
                         required
                     />
                 </div>
-
                 <div className="form-group">
                     <input
                         id="amount"
@@ -50,7 +58,6 @@ const ExpenseForm = ({ onSubmit, initialData, onClose }: ExpenseFormProps) => {
                 </div>
             </div>
             <div className="second-section">
-
                 <div className="form-group">
                     <select
                         id="category"
@@ -59,14 +66,11 @@ const ExpenseForm = ({ onSubmit, initialData, onClose }: ExpenseFormProps) => {
                         required
                     >
                         <option value="">Select category</option>
-                        <option value="Food">Food</option>
-                        <option value="Transport">Transport</option>
-                        <option value="Entertainment">Entertainment</option>
-                        <option value="Shopping">Shopping</option>
-                        <option value="Others">Others</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="food">Food</option>
+                        <option value="travel">Travel</option>
                     </select>
                 </div>
-
                 <div className="form-group">
                     <input
                         id="date"
@@ -78,7 +82,6 @@ const ExpenseForm = ({ onSubmit, initialData, onClose }: ExpenseFormProps) => {
                     />
                 </div>
             </div>
-
             <div className="form-actions">
                 <button type="submit" className='primary'>{initialData ? 'Update' : 'Add'}</button>
                 <button type="button" className='secondary' onClick={onClose}>Cancel</button>
