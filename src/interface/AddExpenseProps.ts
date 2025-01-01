@@ -1,5 +1,5 @@
 interface AddExpenseForm {
-  setBalance: (value: number) => void;
+  setBalance: React.Dispatch<React.SetStateAction<number>>;
   onClose: () => void;
 }
 export default AddExpenseForm;
